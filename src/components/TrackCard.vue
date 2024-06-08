@@ -2,7 +2,9 @@
 import SoundcloudIcon from "@/components/icons/SoundcloudIcon.vue";
 import SpotifyIcon from "@/components/icons/SpotifyIcon.vue";
 import YoutubeIcon from "@/components/icons/YoutubeIcon.vue";
+import { IllestWaveform, type IllestWaveformProps } from "@/utils/1llest-waveform";
 import type { CreateTrackDto } from "@/utils/CreateTrackDto";
+import { reactive, ref } from "vue";
 
 const { track } = defineProps<{
     track: CreateTrackDto;
@@ -10,7 +12,107 @@ const { track } = defineProps<{
 
 const { backgroundColor, accentColor, id, title, subtitle, links } = track;
 
+const componentKey = ref(0);
+
 const cdnUrl = import.meta.env.VITE_CDN_URL;
+
+function darkenHexColor(hex: string, percent: number = 40): string {
+    hex = hex.replace("#", "");
+
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+
+    r = Math.floor(r * (1 - percent / 100));
+    g = Math.floor(g * (1 - percent / 100));
+    b = Math.floor(b * (1 - percent / 100));
+
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+
+    return (
+        "#" +
+        [r, g, b]
+            .map((x) => {
+                const hexValue = x.toString(16);
+                return hexValue.length === 1 ? "0" + hexValue : hexValue;
+            })
+            .join("")
+    );
+}
+
+function lightenHexColor(hex: string, percent: number = 40): string {
+    hex = hex.replace("#", "");
+
+    let r = parseInt(hex.substring(0, 2), 16);
+    let g = parseInt(hex.substring(2, 4), 16);
+    let b = parseInt(hex.substring(4, 6), 16);
+
+    r = Math.floor(r + (255 - r) * (percent / 100));
+    g = Math.floor(g + (255 - g) * (percent / 100));
+    b = Math.floor(b + (255 - b) * (percent / 100));
+
+    r = Math.max(0, Math.min(255, r));
+    g = Math.max(0, Math.min(255, g));
+    b = Math.max(0, Math.min(255, b));
+
+    return (
+        "#" +
+        [r, g, b]
+            .map((x) => {
+                const hexValue = x.toString(16);
+                return hexValue.length === 1 ? "0" + hexValue : hexValue;
+            })
+            .join("")
+    );
+}
+
+const waveOptions = reactive<IllestWaveformProps>({
+    url: `${cdnUrl}/audio/${track.id}`,
+    lineColor: darkenHexColor(track.accentColor),
+    maskColor: darkenHexColor(track.accentColor, 10),
+    cursorWidth: 2,
+    cursorColor: lightenHexColor(track.accentColor, 20),
+    skeleton: true,
+    skeletonColor: track.backgroundColor,
+    skeletonShapeColor: darkenHexColor(track.accentColor),
+    fade: false
+});
+
+const waveformRef = ref<typeof IllestWaveform | null>(null);
+
+const init = ref(false);
+const fetched = ref(false);
+const playing = ref(false);
+const ready = ref(false);
+
+const initHandler = (v: boolean) => {
+    init.value = v;
+};
+
+const fetchedHandler = (v: boolean) => {
+    fetched.value = v;
+};
+
+const readyHandler = (v: boolean) => {
+    ready.value = v;
+};
+
+const playpause = () => {
+    if (!waveformRef.value) {
+        return;
+    }
+    if (!playing.value) {
+        waveformRef.value.play();
+        return;
+    }
+
+    if (playing.value) {
+        waveformRef.value.pause();
+        return;
+    }
+};
 </script>
 
 <template>
@@ -35,7 +137,9 @@ const cdnUrl = import.meta.env.VITE_CDN_URL;
         }"
     >
         <template #header>
-            <img :src="`${cdnUrl}/images/cover/${id}`" alt="album cover" />
+            <div class="aspect-square w-full" style="background-color: v-bind(backgroundColor)">
+                <img :src="`${cdnUrl}/images/cover/${id}`" alt="album cover" />
+            </div>
         </template>
         <template #title>
             <h1 class="text-4xl">
@@ -44,6 +148,49 @@ const cdnUrl = import.meta.env.VITE_CDN_URL;
         </template>
         <template #subtitle>{{ subtitle }}</template>
         <template #content>
+            <pv-divider />
+            <div class="w-full h-16 flex flex-row place-items-center gap-4">
+                <pv-button
+                    label="►"
+                    class="w-12 h-12"
+                    v-if="!playing"
+                    @click="playpause"
+                    :pt="{
+                        root: {
+                            style: {
+                                backgroundColor: backgroundColor,
+                                borderColor: accentColor,
+                                color: accentColor
+                            }
+                        }
+                    }"
+                ></pv-button>
+                <pv-button
+                    label="⏸︎"
+                    v-else
+                    @click="playpause"
+                    class="w-12 h-12 text-3xl"
+                    :pt="{
+                        root: {
+                            style: {
+                                backgroundColor: backgroundColor,
+                                borderColor: accentColor,
+                                color: accentColor
+                            }
+                        }
+                    }"
+                ></pv-button>
+                <illest-waveform
+                    :key="componentKey"
+                    ref="waveformRef"
+                    v-bind="waveOptions"
+                    @on-init="initHandler"
+                    @on-fetched="fetchedHandler"
+                    @on-ready="readyHandler"
+                    @on-play="(v: boolean) => (playing = v)"
+                    @on-pause="(v: boolean) => (playing = v)"
+                />
+            </div>
             <pv-divider />
             <div class="flex flex-row gap-4 justify-center">
                 <a :href="link.url" target="_blank" v-for="link in links" :key="link.platform">

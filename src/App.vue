@@ -3,6 +3,7 @@ import BaseDataPanel from "@/components/BaseDataPanel.vue";
 import SoundcloudIcon from "@/components/icons/SoundcloudIcon.vue";
 import SpotifyIcon from "@/components/icons/SpotifyIcon.vue";
 import YoutubeIcon from "@/components/icons/YoutubeIcon.vue";
+import TrackAudioFilePanel from "@/components/TrackAudioFilePanel.vue";
 import TrackColorsPanel from "@/components/TrackColorsPanel.vue";
 import TrackDataPanel from "@/components/TrackDataPanel.vue";
 import TrackImagesPanel from "@/components/TrackImagesPanel.vue";
@@ -10,6 +11,7 @@ import TrackLinksPanel from "@/components/TrackLinksPanel.vue";
 import TrackReviewPanel from "@/components/TrackReviewPanel.vue";
 import { useCDNManager } from "@/composables/useCDNManager";
 import { useAuthStore } from "@/stores/authStore";
+import { useTrackAudioFileStatusStore } from "@/stores/newAudioFileStatusStore";
 import { useTrackImageStatusStore } from "@/stores/newTrackImageStatusStore";
 import { useTrackStore } from "@/stores/newTrackStore";
 import { CreateTrackDto } from "@/utils/CreateTrackDto";
@@ -21,6 +23,7 @@ const toast = useToast();
 
 const trackStore = useTrackStore();
 const trackImageStatusStore = useTrackImageStatusStore();
+const trackAudioFileStatusStore = useTrackAudioFileStatusStore();
 
 const step1ButtonDisabled = computed(() => {
     const track = trackStore.get();
@@ -42,6 +45,10 @@ const step4ButtonDisabled = computed(() => {
     const track = trackStore.get();
 
     return track.backgroundColor === "" || track.accentColor === "";
+});
+
+const step5ButtonDisabled = computed(() => {
+    return !trackAudioFileStatusStore.get();
 });
 
 const submittedState = ref<"no" | "error" | "success">("no");
@@ -287,7 +294,21 @@ const login = () => {
                         </base-data-panel>
                     </template>
                 </pv-stepper-panel>
-                <pv-stepper-panel header="Step 5: Review">
+
+                <pv-stepper-panel header="Step 5: Audio file">
+                    <template #content="{ prevCallback, nextCallback }">
+                        <base-data-panel
+                            :next-button-disabled="step5ButtonDisabled"
+                            @next-callback="nextCallback"
+                            :prev-button-shown="true"
+                            @prev-callback="prevCallback"
+                        >
+                            <track-audio-file-panel />
+                        </base-data-panel>
+                    </template>
+                </pv-stepper-panel>
+
+                <pv-stepper-panel header="Step 6: Review">
                     <template #content="{ prevCallback, nextCallback }">
                         <base-data-panel
                             v-if="submittedState === 'no'"
@@ -411,7 +432,21 @@ const login = () => {
                         </base-data-panel>
                     </template>
                 </pv-stepper-panel>
-                <pv-stepper-panel header="Step 5: Review">
+
+                <pv-stepper-panel header="Step 5: Audio file">
+                    <template #content="{ prevCallback, nextCallback }">
+                        <base-data-panel
+                            :next-button-disabled="step5ButtonDisabled"
+                            @next-callback="nextCallback"
+                            :prev-button-shown="true"
+                            @prev-callback="prevCallback"
+                        >
+                            <track-audio-file-panel />
+                        </base-data-panel>
+                    </template>
+                </pv-stepper-panel>
+
+                <pv-stepper-panel header="Step 6: Review">
                     <template #content="{ prevCallback, nextCallback }">
                         <base-data-panel
                             v-if="submittedState === 'no'"
