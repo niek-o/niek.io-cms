@@ -117,7 +117,7 @@ const playpause = () => {
 
 <template>
     <pv-card
-        class="w-6/12 text-center"
+        class="w-full sm:w-6/12 text-center"
         :pt="{
             root: {
                 style: {
@@ -151,8 +151,8 @@ const playpause = () => {
             <pv-divider />
             <div class="w-full h-16 flex flex-row place-items-center gap-4">
                 <pv-button
-                    label="►"
-                    class="w-12 h-12"
+                    class="text-3xl"
+                    icon="pi pi-play"
                     v-if="!playing"
                     @click="playpause"
                     :pt="{
@@ -160,25 +160,34 @@ const playpause = () => {
                             style: {
                                 backgroundColor: backgroundColor,
                                 borderColor: accentColor,
-                                color: accentColor
+                                color: accentColor,
+                                aspectRatio: '1/1'
                             }
+                        },
+                        icon: {
+                            class: 'text-xl'
                         }
                     }"
+                    aria-label="Play preview"
                 ></pv-button>
                 <pv-button
-                    label="⏸︎"
+                    icon="pi pi-pause"
                     v-else
                     @click="playpause"
-                    class="w-12 h-12 text-3xl"
                     :pt="{
                         root: {
                             style: {
-                                backgroundColor: backgroundColor,
-                                borderColor: accentColor,
-                                color: accentColor
+                                backgroundColor: accentColor,
+                                borderColor: backgroundColor,
+                                color: backgroundColor,
+                                aspectRatio: '1/1'
                             }
+                        },
+                        icon: {
+                            class: 'text-xl'
                         }
                     }"
+                    aria-label="Pause preview"
                 ></pv-button>
                 <illest-waveform
                     :key="componentKey"

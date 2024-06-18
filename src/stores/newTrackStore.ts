@@ -9,10 +9,11 @@ const emptyTrack: CreateTrackDto = {
     accentColor: "",
     backgroundImage: false,
     releaseDate: new Date(new Date().setUTCHours(0, 0, 0, 0)),
-    links: []
+    links: [],
+    visible: false
 };
 
-const newTrack = reactive(emptyTrack);
+const newTrack = reactive(structuredClone(emptyTrack));
 
 export const useTrackStore = () => {
     const get = () => {

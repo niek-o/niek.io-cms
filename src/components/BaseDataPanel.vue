@@ -8,12 +8,13 @@ const emit = defineEmits(["nextCallback", "prevCallback"]);
 </script>
 
 <template>
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col sm:h-full">
         <div
-            class="border-2 border-dashed surface-border rounded-lg bg-gray-100 flex-col justify-center flex items-center font-medium p-20 min-h-[33rem]"
+            class="sm:border-2 border-dashed border-[var(--p-surface-200)] dark:border-[var(--p-surface-700)] rounded-lg sm:bg-[var(--p-surface-50)] sm:dark:bg-[var(--p-surface-950)] flex-col justify-center flex items-center font-medium p-2 sm:p-20 min-h-96 sm:min-h-[33rem]"
         >
             <slot></slot>
         </div>
+
         <div class="flex pt-6 justify-between">
             <pv-button
                 label="Back"

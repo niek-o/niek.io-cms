@@ -76,6 +76,8 @@ export class CDNManager {
     async publishTrack(id: string) {
         const response = await this.patch("/track", id, "/publish");
 
+        await this.invalidateCache();
+
         return await response.json();
     }
 

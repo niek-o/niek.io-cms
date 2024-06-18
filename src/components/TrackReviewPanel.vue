@@ -13,10 +13,10 @@ const onDateValue = (date: Date) => {
 
 <template>
     <div class="flex flex-col gap-12">
-        <track-card :track="newTrack" />
+        <track-card :track="newTrack" class="w-full lg:w-6/12" />
         <div class="flex flex-col gap-2">
             <label for="releaseDatePicker">Release date</label>
-            <pv-calendar
+            <pv-date-picker
                 id="releaseDatePicker"
                 :model-value="new Date(newTrack.releaseDate)"
                 @update:model-value="onDateValue"

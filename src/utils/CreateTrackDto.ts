@@ -9,6 +9,7 @@ interface ICreateTrackDto {
     backgroundImage: boolean;
     releaseDate: Date;
     links: TrackLink[];
+    visible: boolean;
 }
 
 export class CreateTrackDto implements ICreateTrackDto {
@@ -20,6 +21,7 @@ export class CreateTrackDto implements ICreateTrackDto {
     declare backgroundImage: boolean;
     declare releaseDate: Date;
     declare links: TrackLink[];
+    visible = false;
 
     constructor(createTrackDto?: ICreateTrackDto) {
         if (createTrackDto) {
@@ -31,6 +33,7 @@ export class CreateTrackDto implements ICreateTrackDto {
             this.backgroundImage = createTrackDto.backgroundImage;
             this.releaseDate = createTrackDto.releaseDate;
             this.links = createTrackDto.links.map((link) => new TrackLink(link));
+            this.visible = createTrackDto.visible;
         }
     }
 }

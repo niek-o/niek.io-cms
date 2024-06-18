@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useMobileSite } from "@/composables/useMobileSite";
 import { useTrackStore } from "@/stores/newTrackStore";
 import type { Platform } from "@/utils/Platform";
 import { TrackLink } from "@/utils/TrackLink";
@@ -43,10 +44,12 @@ const trackLinksRemove = (index: number) => {
         data.links.length = 0;
     }
 };
+
+const mobileSite = useMobileSite();
 </script>
 
 <template>
-    <div class="w-full">
+    <div class="w-full" v-if="!mobileSite.get()">
         <pv-toolbar>
             <template #start>
                 <pv-button
@@ -84,6 +87,56 @@ const trackLinksRemove = (index: number) => {
                 </template>
             </pv-column>
         </pv-data-table>
+    </div>
+
+    <div class="w-full" v-else>
+        <pv-toolbar class="mb-10">
+            <template #start>
+                <pv-button
+                    label="New"
+                    icon="pi pi-plus"
+                    severity="success"
+                    @click="trackLinksAdd"
+                />
+            </template>
+        </pv-toolbar>
+
+        <div class="flex flex-col gap-8">
+            <div v-for="(link, index) in data.links" :key="link.platform" class="">
+                <pv-card>
+                    <template #content>
+                        <div class="flex flex-col gap-4">
+                            <div class="flex flex-col gap-1">
+                                <h1 class="font-bold">Platform</h1>
+                                <pv-dropdown
+                                    id="platform"
+                                    v-model="link.platform"
+                                    :options="platforms"
+                                    option-label="name"
+                                    option-value="value"
+                                    class="w-full"
+                                />
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <h1 class="font-bold">URL</h1>
+                                <pv-input-text v-model="link.url" class="w-full" autofocus />
+                            </div>
+
+                            <div class="flex flex-col gap-1">
+                                <h1 class="font-bold">Actions</h1>
+                                <pv-button
+                                    @click="trackLinksRemove(index)"
+                                    severity="danger"
+                                    outlined
+                                    icon="pi pi-trash"
+                                ></pv-button>
+                            </div>
+                        </div>
+                    </template>
+                </pv-card>
+            </div>
+        </div>
     </div>
 </template>
 
