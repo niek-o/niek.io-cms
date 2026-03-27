@@ -21,7 +21,7 @@ export class CDNManager {
 
     private async postJSON<T>(path: string, data: T, ...params: string[]) {
         return fetch(`${this.baseURL}${path}${params}`, {
-            method: "POST", // or 'PUT'
+            method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "x-api-key": apiKey
@@ -32,7 +32,7 @@ export class CDNManager {
 
     private async putJSON<T>(path: string, id: string, data: T, ...params: string[]) {
         return fetch(`${this.baseURL}${path}/${id}${params}`, {
-            method: "PUT", // or 'PUT'
+            method: "PUT",
             headers: {
                 "Content-Type": "application/json",
                 "x-api-key": apiKey
@@ -43,7 +43,7 @@ export class CDNManager {
 
     private async patch(path: string, id: string, ...params: string[]) {
         return await fetch(`${this.baseURL}${path}/${id}${params}`, {
-            method: "PATCH", // or 'PUT',
+            method: "PATCH",
             headers: {
                 "x-api-key": apiKey
             }
@@ -52,7 +52,7 @@ export class CDNManager {
 
     private async delete(path: string, ...params: string[]) {
         return await fetch(`${this.baseURL}${path}/${params}`, {
-            method: "DELETE", // or 'PUT'
+            method: "DELETE",
             headers: {
                 "x-api-key": apiKey
             }

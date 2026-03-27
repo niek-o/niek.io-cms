@@ -22,6 +22,10 @@ const platforms = ref<{ name: string; value: Platform }[]>([
     {
         name: "Spotify",
         value: "spotify"
+    },
+    {
+        name: "Free Download",
+        value: "freedl"
     }
 ]);
 

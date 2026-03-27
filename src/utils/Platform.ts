@@ -1,1 +1,1 @@
-export type Platform = "youtube" | "spotify" | "soundcloud";
+export type Platform = "youtube" | "spotify" | "soundcloud" | "freedl";
